@@ -1,0 +1,5 @@
+Motor	KEYWORD1
+
+setMode	KEYWORD2
+setVel	KEYWORD2
+setPins	KEYWORD2

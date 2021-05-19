@@ -1,0 +1,6 @@
+{
+    "programmer": "AVRISP mkII",
+    "board": "arduino:avr:mega",
+    "configuration": "cpu=atmega2560",
+    "sketch": "BTPCIBR\\MPU6050.ino"
+}
