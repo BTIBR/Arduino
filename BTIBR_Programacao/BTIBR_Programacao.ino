@@ -1,30 +1,37 @@
 /************************************************************************************************************************
-                                                   PROJETO INTEGRADOR
                                                   SENAI "Roberto Mange"
                              Bruno Camargo - Lucas Melaré - Rafael Falcaro - Rubens Lima
-                                                         2STMI
-                                                         2020
+                                                         3STMI
+                                                         2021
 ************************************************************************************************************************/
+
+
+#include <X9C103S.h>
+DigiPot pot(45,46,44);    // INC, UD, CS
+char inChar;
+String cmd;
+
+
 
 //***********************************************************************************************************************
 // Inclusão das Bibliotecas e Header dos pinos da placa
 #include <Motor.h>                        // Biblioteca customizada para os Motores de Passo
-#include <Servo.h>                        // Biblioteca para motores Servo
+/*#include <Servo.h>                        // Biblioteca para motores Servo
 #include <Wire.h>                         // Biblioteca para uso do Giroscópio MPU6050
-#include <PS2X_lib.h>                     // Biblioteca do controle de PlayStation 2 sem fio
+#include <PS2X_lib.h>                     // Biblioteca do controle de PlayStation 2 sem fio*/
 #include "PinoutConfig.h"                 // Header de configuração dos pinos da placa Arduino Mega
 
 //***********************************************************************************************************************
 // Criação dos Objetos
-Motor M1(0, 0, 0, 0, 0, 0, 0, 0, 0);      // Motor 1 - Base (Rz)
-Motor M2(0, 0, 0, 0, 0, 0, 0, 0, 0);      // Motor 2 - Ombro (Rx1)
+Motor M1(pin_M1_FAULT, pin_M1_DIR, pin_M1_SLEEP, pin_M1_RESET, pin_M1_MODE2, pin_M1_MODE1, pin_M1_ENABLE, pin_M1_MODE0, pin_M1_STEP);      // Motor 1 - Base (Rz)
+/*Motor M2(0, 0, 0, 0, 0, 0, 0, 0, 0);      // Motor 2 - Ombro (Rx1)
 Motor M3(0, 0, 0, 0, 0, 0, 0, 0, 0);      // Motor 3 - Antebraço (Rx2)
 Servo M4;                                 // Motor 4 - Garra
-PS2X  Controle;                           // Controle de PlayStation 2 sem fio
+PS2X  Controle;                           // Controle de PlayStation 2 sem fio*/
 
 //***********************************************************************************************************************
 // Declaração de Variáveis
-
+/*
 // Sensor Giroscópio
 const int MPU = 0x68;                     // Endereco I2C do MPU6050
 int aX, aY, aZ, Tmp, gX, gY, gZ;          // Variaveis para armazenar valores dos sensores (a=Aceleração | Tmp=Temperatura | g=Rotação)
@@ -40,19 +47,24 @@ char in[10];                              // Valores de entrada da porta de comu
 String inputString = "";                  // String que armazena os dados vindos da serial
 bool stringComplete = false;              // Flag de finalização de uma palavra
 String posicaoGarra = "";                 // Parte da String de comunicação que significa a posição da Garra em graus
-
+*/
 //***********************************************************************************************************************
 // Setup do Sistema
 void setup() {
 
   // Comunicação Serial
-  Serial.begin(9600);                     // Inciando a porta de comunicação com o LabVIEW
-  Serial1.begin(9600);
-  inputString.reserve(20);                // Reservando até 20 bytes para a palavra de comunicação
+  Serial.begin(9600);                     // Inciando a porta de comunicação serial
+  //Serial.println("start");
+
+  //inputString.reserve(20);                // Reservando até 20 bytes para a palavra de comunicação
 
   // Motores
   M1.setPins();                           // Definindo as entradas e saídas do M1
-  M2.setPins();                           // Definindo as entradas e saídas do M2
+  //M1.setMode("1/32");
+  M1.setMode("FULL");
+
+  
+  /*M2.setPins();                           // Definindo as entradas e saídas do M2
   M3.setPins();                           // Definindo as entradas e saídas do M3
   M4.attach(9);                           // Definindo o pino de saída PWM do M4
 
@@ -83,13 +95,18 @@ void setup() {
   digitalWrite(43, LOW);
   digitalWrite(45, LOW);
   digitalWrite(47, LOW);
-  digitalWrite(49, LOW);
+  digitalWrite(49, LOW);*/
 }
 
 //***********************************************************************************************************************
 // Rotina principal
 void loop() {
 
+
+  digiPot();
+  testePCB();
+  
+/*
   if (stringComplete) {
     if (inputString[4] == '1') {
       digitalWrite(49, HIGH);
@@ -143,9 +160,11 @@ void loop() {
     posicaoGarra = "";
     stringComplete = false;
   }
-
+*/
   delay(50);
 }
+
+/*
 
 void serialEvent() {
 
@@ -171,7 +190,7 @@ void SetupControle() {
 
 void LeituraControle() {
 
-  Controle.read_gamepad(false, PS2_Vibrate);          // Ler controle
+  Controle.read_gamepad(false, PS2_Vibrate);    // Ler controle
 
   if (Controle.NewButtonState()) {
     if (Controle.Button(PSB_RED))     Serial.println("Circulo");
@@ -190,28 +209,28 @@ void LeituraControle() {
 }
 
 void SetupMPU6050() {
-  Wire.begin();                         // Inicializa a bilioteca Wire
-  Wire.beginTransmission(MPU);          // Inicia a transmissão para o endereço do MPU
-  Wire.write(0x6B);                     // Escreve o comando de inicialização
-  Wire.write(0);                        // Limpa o canal de escrita
-  Wire.endTransmission(true);           // Finaliza a transmissão
+  Wire.begin();                          // Inicializa a bilioteca Wire
+  Wire.beginTransmission(MPU);           // Inicia a transmissão para o endereço do MPU
+  Wire.write(0x6B);                      // Escreve o comando de inicialização
+  Wire.write(0);                         // Limpa o canal de escrita
+  Wire.endTransmission(true);            // Finaliza a transmissão
 }
 
 void LeituraMPU6050() {
   // Processo de Comunicação e Transmissão dos dados
-  Wire.beginTransmission(MPU);          // Inicia a transmissão para o endereço do MPU
-  Wire.write(0x3B);                     // Define o registrador 0x3B (ACCEL_XOUT_H) como primeiro da lista de leitura
-  Wire.endTransmission(false);          // Mantém a transmissão ativa
-  Wire.requestFrom(MPU, 14, true);      // Solicita os dados do sensor
+  Wire.beginTransmission(MPU);           // Inicia a transmissão para o endereço do MPU
+  Wire.write(0x3B);                      // Define o registrador 0x3B (ACCEL_XOUT_H) como primeiro da lista de leitura
+  Wire.endTransmission(false);           // Mantém a transmissão ativa
+  Wire.requestFrom(MPU, 14, true);       // Solicita os dados do sensor
 
   // Armazena o valor dos sensores nas variaveis correspondentes
-  aX = Wire.read() << 8 | Wire.read();  //0x3B (ACCEL_XOUT_H) & 0x3C (ACCEL_XOUT_L)
-  aY = Wire.read() << 8 | Wire.read();  //0x3D (ACCEL_YOUT_H) & 0x3E (ACCEL_YOUT_L)
-  aZ = Wire.read() << 8 | Wire.read();  //0x3F (ACCEL_ZOUT_H) & 0x40 (ACCEL_ZOUT_L)
-  Tmp = Wire.read() << 8 | Wire.read(); //0x41 (TEMP_OUT_H) & 0x42 (TEMP_OUT_L)
-  gX = Wire.read() << 8 | Wire.read();  //0x43 (GYRO_XOUT_H) & 0x44 (GYRO_XOUT_L)
-  gY = Wire.read() << 8 | Wire.read();  //0x45 (GYRO_YOUT_H) & 0x46 (GYRO_YOUT_L)
-  gZ = Wire.read() << 8 | Wire.read();  //0x47 (GYRO_ZOUT_H) & 0x48 (GYRO_ZOUT_L)
+  aX  = Wire.read() << 8 | Wire.read();  // 0x3B (ACCEL_XOUT_H) & 0x3C (ACCEL_XOUT_L)
+  aY  = Wire.read() << 8 | Wire.read();  // 0x3D (ACCEL_YOUT_H) & 0x3E (ACCEL_YOUT_L)
+  aZ  = Wire.read() << 8 | Wire.read();  // 0x3F (ACCEL_ZOUT_H) & 0x40 (ACCEL_ZOUT_L)
+  Tmp = Wire.read() << 8 | Wire.read();  // 0x41 (TEMP_OUT_H)   & 0x42 (TEMP_OUT_L)
+  gX  = Wire.read() << 8 | Wire.read();  // 0x43 (GYRO_XOUT_H)  & 0x44 (GYRO_XOUT_L)
+  gY  = Wire.read() << 8 | Wire.read();  // 0x45 (GYRO_YOUT_H)  & 0x46 (GYRO_YOUT_L)
+  gZ  = Wire.read() << 8 | Wire.read();  // 0x47 (GYRO_ZOUT_H)  & 0x48 (GYRO_ZOUT_L)
 
   Serial.println(aX);
   Serial.println(aY);
@@ -221,4 +240,4 @@ void LeituraMPU6050() {
   Serial.println(gY);
   Serial.println(gZ);
   Serial.println("**********************************************");
-}
+}*/

@@ -1,12 +1,12 @@
-#define enablePin 2
-#define mode0Pin  3
-#define mode1Pin  4
-#define mode2Pin  5
-#define resetPin  6
-#define sleepPin  7
-#define stepPin   8
-#define dirPin    9
-#define faultPin  10
+#define enablePin 29
+#define mode0Pin  28
+#define mode1Pin  27
+#define mode2Pin  26
+#define resetPin  7
+#define sleepPin  25
+#define stepPin   24
+#define dirPin    23
+#define faultPin  22
 
 unsigned long lastMicros;
 String txtString;
@@ -36,14 +36,14 @@ void loop() {
     Serial.flush();                                       // Limpa a Porta Serial
   }
 
-  if (txtString == "O") {
+  if (txtString == "M") {
     digitalWrite(dirPin, LOW);
     microstep(200);
   }
 
-  if (txtString == "P") {
+  if (txtString == "F") {
     digitalWrite(dirPin,  LOW);
-    microstep(200);
+    fullstep(200);
   }
 
   if (txtString == "K")   freio();
