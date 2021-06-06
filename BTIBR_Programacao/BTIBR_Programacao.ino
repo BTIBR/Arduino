@@ -5,6 +5,17 @@
                                                          2021
 ************************************************************************************************************************/
 
+#include <X9C103S.h>
+
+#define pin_M1_CS   44
+#define pin_M1_INC  45
+#define pin_M1_UD   46
+
+X9C103S POT;
+
+
+
+
 
 //***********************************************************************************************************************
 // Inclusão das Bibliotecas e Header dos pinos da placa
@@ -18,7 +29,7 @@
 //***********************************************************************************************************************
 // Criação dos Objetos
 StepperMotor MOTOR[4];      // 0, Base, Ombro, Antebraço
-CustomServo  SERVO[2];      // 0, Garra
+CustomServo  SERVO[5];      // 0, 0, 0, 0, Garra
 PS2X         PS2;           // Controle de PlayStation 2 sem fio
 
 
@@ -76,6 +87,12 @@ void setup() {
 
   // Controle PS2 sem fio
   SetupPS2();                             // Setup do controle sem fio de PS2
+
+
+
+  POT.SetPins(pin_M1_INC, pin_M1_UD, pin_M1_CS);
+  POT.Reset();
+  POT.Set(25);
 }
 
 
@@ -84,10 +101,15 @@ void setup() {
 void loop() {
   if (stringComplete) {
     // Seleção das funções de acordo com o comando inicial
-    if (cmd.charAt(0) == '#')      MoveStepper(cmd);
-    else if (cmd.charAt(0) == '$') MoveServo(cmd);
+    if      (cmd.charAt(0) == '#') MoveMotor(cmd);
     else if (cmd.charAt(0) == '&') MoveCS(cmd);
     else if (cmd.charAt(0) == 'M') SetParameter(cmd);
+    else if (cmd.charAt(0) == 'J') MoveJog(cmd);
+
+    else if (cmd.charAt(0) == 'K') MOTOR[1].Kill();
+    else if (cmd.charAt(0) == 'B') MOTOR[1].Brake();
+    else if (cmd.charAt(0) == 'V') SetVelo(cmd);
+    
     else Serial.println("Comando inválido");          // Se não for nenhuma das opções, retorna mensagem de erro
     cmd = "";                                         // Limpa a variável que armazena os comandos
     stringComplete = false;                           // Define como falso a flag de String Completa
