@@ -107,9 +107,10 @@ void SetParameter(String _cmd) {
 
   _cmd.remove(0, 2);                                  // Remove os caracteres número do motor + .
   int indexEq = _cmd.indexOf("=");                    // Procura pela posição do caractere =
-  String parameter = _cmd.substring(0, indexEq - 1);  // Copia da String _cmd só a parte do parâmetro
 
-  _cmd.remove(0, indexEq);                            // Remove o parâmetro e o caractere =
+
+  String parameter = _cmd.substring(0, indexEq);      // Copia da String _cmd só a parte do parâmetro
+  _cmd.remove(0, indexEq + 1);                        // Remove o parâmetro e o caractere =
   double parameterValue = _cmd.toDouble();            // Extrai o valor do parâmetro a ser configurado
 
   if (numMotor_I == 4) {
