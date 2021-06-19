@@ -5,7 +5,8 @@ void SetupMotors() {
   MOTOR[1].SetMode(0);                          // Definindo o modo de funcionamento do Motor: 0=FullStep, 1=HalfStep, 2=1/4, 3=1/8, 4=1/16, 5=1/32
   MOTOR[1].Dir         = 0;                     // Sentido de Giro: 0->CW / 1->CCW
   MOTOR[1].HomeOffset  = 0;                     // Offset de posição [°]
-  MOTOR[1].JogSpeed    = 180;                   // Setpoint de velocidade de movimento [°/s]
+  //MOTOR[1].JogSpeed    = 180;                 // Setpoint de velocidade de movimento [°/s]
+  MOTOR[1].JogSpeed    = 90;       // Counts
   MOTOR[1].JogTa       = 1;                     // Tempo de aceleração [s]
   MOTOR[1].JogTd       = 1;                     // Tempo de desaceleração [s]
   MOTOR[1].MaxPos      = 0;                     // Posição Máxima permitida [°]
@@ -18,7 +19,8 @@ void SetupMotors() {
   MOTOR[2].SetMode(0);                          // Definindo o modo de funcionamento do Motor: 0=FullStep, 1=HalfStep, 2=1/4, 3=1/8, 4=1/16, 5=1/32
   MOTOR[2].Dir         = 0;                     // Sentido de Giro: 0->CW / 1->CCW
   MOTOR[2].HomeOffset  = 0;                     // Offset de posição [°]
-  MOTOR[2].JogSpeed    = 180;                   // Setpoint de velocidade de movimento [°/s]
+  //MOTOR[2].JogSpeed    = 180;                 // Setpoint de velocidade de movimento [°/s]
+  MOTOR[2].JogSpeed    = 90;       // Counts
   MOTOR[2].JogTa       = 1;                     // Tempo de aceleração [s]
   MOTOR[2].JogTd       = 1;                     // Tempo de desaceleração [s]
   MOTOR[2].MaxPos      = 0;                     // Posição Máxima permitida [°]
@@ -31,7 +33,8 @@ void SetupMotors() {
   MOTOR[3].SetMode(0);                          // Definindo o modo de funcionamento do Motor: 0=FullStep, 1=HalfStep, 2=1/4, 3=1/8, 4=1/16, 5=1/32
   MOTOR[3].Dir         = 0;                     // Sentido de Giro: 0->CW / 1->CCW
   MOTOR[3].HomeOffset  = 0;                     // Offset de posição [°]
-  MOTOR[3].JogSpeed    = 180;                   // Setpoint de velocidade de movimento [°/s]
+  //MOTOR[3].JogSpeed    = 180;                 // Setpoint de velocidade de movimento [°/s]
+  MOTOR[3].JogSpeed    = 90;       // Counts
   MOTOR[3].JogTa       = 1;                     // Tempo de aceleração [s]
   MOTOR[3].JogTd       = 1;                     // Tempo de desaceleração [s]
   MOTOR[3].MaxPos      = 0;                     // Posição Máxima permitida [°]
@@ -77,7 +80,8 @@ void MoveMotor(String _cmd) {
   else if (moveType_S == "j") {
     String dir_S = _cmd.substring(2, 3);            // Extrai a direção do movimento
     if (dir_S == "+") MOTOR[numMotor_I].Jog(0);     // Move em Jog Positivo
-    else MOTOR[numMotor_I].Jog(1);                  // Move em Jog Negativo
+    else if (dir_S == "-") MOTOR[numMotor_I].Jog(1);// Ativa o freio (holding torque)
+    else MOTOR[numMotor_I].Brake();                 // Move em Jog Negativo
   }
 
   else if (moveType_S == "k") {
@@ -85,13 +89,6 @@ void MoveMotor(String _cmd) {
   }
 
   else Serial.println("Comando inválido");          // Se não for nenhuma das opções, retorna mensagem de erro
-
-  Serial.print("Motor[");
-  Serial.print(numMotor_I);
-  Serial.print("].ActPos = ");
-  if (numMotor_I == 4) Serial.print(SERVO[numMotor_I].ActPos);
-  else                 Serial.print(MOTOR[numMotor_I].ActPos);
-  Serial.println();
 }
 
 void MoveCS(String _cmd) {
@@ -107,7 +104,6 @@ void SetParameter(String _cmd) {
 
   _cmd.remove(0, 2);                                  // Remove os caracteres número do motor + .
   int indexEq = _cmd.indexOf("=");                    // Procura pela posição do caractere =
-
 
   String parameter = _cmd.substring(0, indexEq);      // Copia da String _cmd só a parte do parâmetro
   _cmd.remove(0, indexEq + 1);                        // Remove o parâmetro e o caractere =

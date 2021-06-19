@@ -14,7 +14,7 @@ bool stringComplete = false;              // Flag de finalização de uma palavr
 double soma = 0.0;
 
 void setup() {
-  POT.SetPins(pin_M1_INC, pin_M1_UD, pin_M1_CS);
+  POT.SetPins(pin_M1_CS, pin_M1_INC, pin_M1_UD);
   Serial.begin(9600);
   POT.Reset();
   pinMode(A1, INPUT);

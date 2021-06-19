@@ -66,9 +66,9 @@ void loop() {
   if (stringComplete) {
     // Seleção das funções de acordo com o comando inicial
     if      (cmd.charAt(0) == '#') MoveMotor(cmd);    // Exemplo: abs #1=25   inc #2^-30   jog #1j+   hold #1j/   kill #1k
-    else if (cmd.charAt(0) == '&') MoveCS(cmd);       // Exemplo: 
+    else if (cmd.charAt(0) == '&') MoveCS(cmd);       // Exemplo:
     else if (cmd.charAt(0) == 'M') SetParameter(cmd); // Exemplo: M1.JogSpeed=180 M1.HomeOffset=-40
-    
+
     else Serial.println("Comando inválido");          // Se não for nenhuma das opções, retorna mensagem de erro
     cmd = "";                                         // Limpa a variável que armazena os comandos
     stringComplete = false;                           // Define como falso a flag de String Completa
