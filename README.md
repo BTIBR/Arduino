@@ -1,5 +1,5 @@
 # Arduino
-Projeto de software embarcado na plataforma Arduino para leitura da cálula de carga do dinamômetro da BTIBR
+Projeto de software embarcado na plataforma Arduino para leitura da célula de carga do dinamômetro da BTIBR
 
 ### Hardware
 - Placa: Arduino Nano
