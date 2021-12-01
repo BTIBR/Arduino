@@ -11,9 +11,8 @@
 #include <HX711.h>
 
 // DEFINIÇÕES DE PINOS
-#define pinDT  2
-#define pinSCK  3
-#define pinBotao 4
+#define pinDT  A1
+#define pinSCK  A2
 
 // INSTANCIANDO OBJETOS
 HX711 scale;
@@ -30,15 +29,15 @@ void setup() {
   delay(2000);
   scale.tare(); // ZERANDO A BALANÇA PARA DESCONSIDERAR A MASSA DA ESTRUTURA
 
-  Serial.println("Balança Zerada");
+  //Serial.println("Balança Zerada");
 }
 
 void loop() {
 
-  medida = scale.get_units(5); // SALVANDO NA VARIAVEL O VALOR DA MÉDIA DE 5 MEDIDAS
+  medida = scale.get_units(); // SALVANDO NA VARIAVEL O VALOR DA MÉDIA DE 5 MEDIDAS
   Serial.println(medida, 3); // ENVIANDO PARA MONITOR SERIAL A MEDIDA COM 3 CASAS DECIMAIS
 
-  scale.power_down(); // DESLIGANDO O SENSOR
+  /*scale.power_down(); // DESLIGANDO O SENSOR
   delay(1000); // AGUARDA 5 SEGUNDOS
-  scale.power_up(); // LIGANDO O SENSOR
+  scale.power_up(); // LIGANDO O SENSOR*/
 }
