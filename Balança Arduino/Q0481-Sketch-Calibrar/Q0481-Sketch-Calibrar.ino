@@ -21,7 +21,7 @@ HX711 scale;
 float medida = 0;
 
 void setup() {
-  Serial.begin(57600);
+  Serial.begin(9600);
 
   scale.begin(pinDT, pinSCK); // CONFIGURANDO OS PINOS DA BALANÇA
   scale.set_scale(-1110000); // LIMPANDO O VALOR DA ESCALA
